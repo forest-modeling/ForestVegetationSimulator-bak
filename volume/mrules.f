@@ -18,11 +18,17 @@ C     YW 04/15/14 Added region 9 Clark merch rule.
 C     YW 02/13/15 Changed the merch rule for Region 3 MINLEN and MINLENT to 2'
 C     YW 08/25/15 Added merch rule for Region 8 Clark equation
 C
+      ! Merch rule parameters can be set externally for conifer and hardwood
+      use globals, only : use_api_mrules, mrule_cor, mrule_evod
+     &  , mrule_maxlen, mrule_minlen, mrule_minlent, mrule_opt
+     &  , mrule_stump, mrule_mtopp
+     &  , mrule_mtops, mrule_trim, mrule_merchl, mrule_minbfd
+
       CHARACTER*1 COR 
       CHARACTER*2 FORST, PROD                 
       CHARACTER*3 MDL                 
       character*10 VOLEQ
-      INTEGER EVOD,OPT,REGN,spp
+      INTEGER EVOD,OPT,REGN,spp,i
       REAL MAXLEN,MINLEN,MERCHL,MTOPP,MTOPS,STUMP,TRIM
       REAL MINLENT,MINBFD,BTR,DBTBH,DBHOB
       CHARACTER*2 CDANUW
@@ -34,6 +40,32 @@ C
                   
       IF(BTR.GT.0.0 .AND. DBTBH.LE.0) DBTBH = DBHOB-(DBHOB*BTR/100.0)
       
+      if (use_api_mrules) then
+        ! Extract FIA species code from the profile equation number
+        read(voleq(8:10),'(i3)') spp
+
+        ! FIXME: There are no profile equations for hardwood
+        ! Select the merch rules
+        i = 1 ! conifer
+        if (spp>=300) then i = 2 ! hardwood
+
+        COR = mrule_cor(i)
+        EVOD = mrule_evod(i)
+        MAXLEN = mrule_maxlen(i)
+        MINLEN = mrule_minlen(i)
+        minlent = mrule_minlent(i)
+        OPT = mrule_opt(i)
+        STUMP = mrule_stump(i)
+        MTOPP = mrule_mtopp(i)
+        MTOPS = mrule_mtops(i)
+        TRIM = mrule_trim(i)
+        MERCHL = mrule_merchl(i)
+        MINBFD = mrule_minbfd(i)
+
+        return
+
+      endif
+
       MDL = VOLEQ(4:6)
       IF(REGN.EQ.1) THEN
          IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR.
