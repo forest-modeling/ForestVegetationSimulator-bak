@@ -60,6 +60,10 @@ Cx      INTEGER MYACT(1)                                            !Remove thes
 Cx      REAL PRM(1)                                                 !Remove these
 Cx      DATA MYACT/100/                                             !Remove these
       INTEGER IRSTRTCD,ISTOPDONE,IRTNCD,ISTOPRES,lenCl
+
+C-- F2PY signature hints
+Cf2py intent(out) irtncd
+
 C
 C     ******************     EXECUTION BEGINS     ******************
 C
@@ -167,7 +171,7 @@ C
       CALL fvsStopPoint (7,ISTOPRES)
       IF (ISTOPRES.NE.0) RETURN
       CALL fvsGetRtnCode(IRTNCD)
-      IF (IRTNCD.NE.0) RETURN 
+      IF (IRTNCD.NE.0) RETURN
 C     BRANCH HERE IF RESTARTING FROM STOPCODE 7
    19 CONTINUE
 C
